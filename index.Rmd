@@ -56,10 +56,10 @@ Row
 ggplotly(cadre_harmonise_caf_ipcnov2020currentgraph)
 ```  
   
-> Hover cursor over graph for more information; Select phases in legend to filter
+> Hover cursor over graph for more information; select phases in legend to filter
 
 
-### Population Estimates (in millions) by Phase: November 2020 Exercise Projected (June - August 2021)
+### Population Estimates (in millions) by Phase: November 2020 Exercise Current (September - December 2020)  
 
 ```{r}
 datatable(cadre_harmonise_caf_ipcnov2020current,  extensions = 'Buttons', options = list(pageLength = 18, dom = "Bft",
@@ -77,13 +77,13 @@ datatable(cadre_harmonise_caf_ipcnov2020current,  extensions = 'Buttons', option
 Row
 -------------------------------------   
 
-### Population Estimates (in millions) by Phase: November 2020 Exercise Current (September - December 2020)  
+### Population Estimates (in millions) by Phase: November 2020 Exercise Projected (June - August 2021) 
 
 ```{r}
 ggplotly(cadre_harmonise_caf_ipcnov2020projectedgraph)
 ``` 
 
-> Hover cursor over graph for more information; Select phases in legend to filter
+> Hover cursor over graph for more information; select phases in legend to filter
 
 ### Population Estimates (in millions) by Phase: November 2020 Exercise Projected (June - August 2021)
     
