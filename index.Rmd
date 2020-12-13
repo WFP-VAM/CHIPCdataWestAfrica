@@ -1,0 +1,59 @@
+---
+title: "Cadre Harmonisé (CH) & Integrated Phase Classification (IPC) Estimations for West & Central Africa : November 2020 Exercise"
+output: 
+  flexdashboard::flex_dashboard:
+  orientation: row
+  
+---
+
+```{r setup, include=FALSE}
+
+library(flexdashboard)
+library(tidyverse)
+library(rhdx)
+library(janitor)
+library(ckanr)
+library(skimr)
+library(sf)
+library(tmap)
+library(leaflet)
+library(readxl)
+library(plotly)
+library(DT)
+
+
+
+cadre_harmonise_caf_ipc <- read_excel("cadre_harmonise_caf_ipc.xlsx")
+
+cadre_harmonise_caf_ipcnov2020 <- cadre_harmonise_caf_ipc %>% filter(exercise_year == 2020 & exercise_label == "Sep-Dec")
+
+cadre_harmonise_caf_ipcnov2020currenttable <- cadre_harmonise_caf_ipcnov2020 %>% filter(chtype == "current") %>% group_by(Country = adm0_name) %>%
+  summarise(population = sum(population), phase1 = sum(phase1), phase2 = sum(phase2), phase3 = sum(phase3), phase4 = sum(phase4), phase5 = sum(phase5), phase35 = sum(phase35))
+
+cadre_harmonise_caf_ipcnov2020projectedtable <- cadre_harmonise_caf_ipcnov2020 %>% filter(chtype == "projected") %>% group_by(Country = adm0_name) %>%
+  summarise(population = sum(population), phase1 = sum(phase1), phase2 = sum(phase2), phase3 = sum(phase3), phase4 = sum(phase4), phase5 = sum(phase5), phase35 = sum(phase35))
+
+
+```
+
+
+Row
+-------------------------------------
+
+  
+### Population Estimates by Phase: November 2020 Exercise Current (September - December 2020)
+    
+```{r}
+datatable(cadre_harmonise_caf_ipcnov2020currenttable, options = list(dom = 'ft'))
+```
+
+
+Row
+-------------------------------------   
+
+
+### Population Estimates by Phase: November 2020 Exercise Projected (June - August 2021)
+    
+```{r}
+datatable(cadre_harmonise_caf_ipcnov2020projectedtable, options = list(dom = 'ft'))
+```
