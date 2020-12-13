@@ -21,19 +21,20 @@ library(readxl)
 library(plotly)
 library(DT)
 
-
-
 cadre_harmonise_caf_ipc <- read_excel("cadre_harmonise_caf_ipc.xlsx")
-
-cadre_harmonise_caf_ipcnov2020 <- cadre_harmonise_caf_ipc %>% filter(exercise_year == 2020 & exercise_label == "Sep-Dec")
-
-cadre_harmonise_caf_ipcnov2020currenttable <- cadre_harmonise_caf_ipcnov2020 %>% filter(chtype == "current") %>% group_by(Country = adm0_name) %>%
-  summarise(population = sum(population), phase1 = sum(phase1), phase2 = sum(phase2), phase3 = sum(phase3), phase4 = sum(phase4), phase5 = sum(phase5), phase35 = sum(phase35))
-
-cadre_harmonise_caf_ipcnov2020projectedtable <- cadre_harmonise_caf_ipcnov2020 %>% filter(chtype == "projected") %>% group_by(Country = adm0_name) %>%
-  summarise(population = sum(population), phase1 = sum(phase1), phase2 = sum(phase2), phase3 = sum(phase3), phase4 = sum(phase4), phase5 = sum(phase5), phase35 = sum(phase35))
+cadre_harmonise_caf_ipcnov2020 <- cadre_harmonise_caf_ipc %>% filter(exercise_year == 2020 & exercise_label == "Sep-Dec") %>% mutate_at(vars(population:phase35), replace_na, 0) 
 
 
+#by country
+cadre_harmonise_caf_ipcnov2020country <- cadre_harmonise_caf_ipcnov2020 %>% group_by(Country = adm0_name, chtype) %>% summarise(population = sum(population), phase1 = sum(phase1), phase2 = sum(phase2), phase3 =sum(phase3), phase4 = sum(phase4), phase5 = sum(phase5), phase35 = sum(phase35)) %>% mutate_if(is.numeric, funs(. / 1000000)) %>% mutate_if(is.numeric, round, 2)
+#total
+cadre_harmonise_caf_ipcnov2020total <- cadre_harmonise_caf_ipcnov2020 %>% group_by(chtype) %>% 
+  summarise(population = sum(population), phase1 = sum(phase1), phase2 = sum(phase2), phase3 = sum(phase3), phase4 = sum(phase4), phase5 = sum(phase5), phase35 = sum(phase35)) %>% mutate(Country = "Total") %>% mutate_if(is.numeric, funs(. / 1000000)) %>% mutate_if(is.numeric, round, 1)
+
+cadre_harmonise_caf_ipcnov2020all <- bind_rows(cadre_harmonise_caf_ipcnov2020country, cadre_harmonise_caf_ipcnov2020total)
+  
+cadre_harmonise_caf_ipcnov2020current <- cadre_harmonise_caf_ipcnov2020all %>% filter(chtype == "current") %>% select(-chtype)
+cadre_harmonise_caf_ipcnov2020projected <- cadre_harmonise_caf_ipcnov2020all %>% filter(chtype == "projected") %>% select(-chtype)
 ```
 
 
@@ -41,10 +42,17 @@ Row
 -------------------------------------
 
   
-### Population Estimates by Phase: November 2020 Exercise Current (September - December 2020)
+### Population Estimates *(in millions) by Phase: November 2020 Exercise Current (September - December 2020)
     
 ```{r}
-datatable(cadre_harmonise_caf_ipcnov2020currenttable, options = list(dom = 'ft'))
+datatable(cadre_harmonise_caf_ipcnov2020current,  extensions = 'Buttons', options = list(pageLength = 18, dom = "Bft",
+    buttons = c('copy', 'csv', 'excel'))) %>%
+  formatStyle(
+    0,
+    target = "row",
+    fontWeight = styleEqual(18, "bold")
+  )
+
 ```
 
 
@@ -52,8 +60,14 @@ Row
 -------------------------------------   
 
 
-### Population Estimates by Phase: November 2020 Exercise Projected (June - August 2021)
+### Population Estimates (in millions) by Phase: November 2020 Exercise Projected (June - August 2021)
     
 ```{r}
-datatable(cadre_harmonise_caf_ipcnov2020projectedtable, options = list(dom = 'ft'))
+datatable(cadre_harmonise_caf_ipcnov2020projected,  extensions = 'Buttons', options = list(pageLength = 18, dom = "Bft",
+    buttons = c('copy', 'csv', 'excel'))) %>%
+  formatStyle(
+    0,
+    target = "row",
+    fontWeight = styleEqual(18, "bold")
+  )
 ```
