@@ -58,7 +58,6 @@ ggplotly(cadre_harmonise_caf_ipcnov2020currentgraph)
   
 > Hover cursor over graph for more information; select phases in legend to filter
 
-
 ### Population Estimates (in millions) by Phase: November 2020 Exercise Current (September - December 2020)  
 
 ```{r}
@@ -71,8 +70,6 @@ datatable(cadre_harmonise_caf_ipcnov2020current,  extensions = 'Buttons', option
   )
 
 ```
-
-
 
 Row
 -------------------------------------   
