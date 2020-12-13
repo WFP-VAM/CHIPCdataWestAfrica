@@ -10,40 +10,55 @@ output:
 
 library(flexdashboard)
 library(tidyverse)
-library(rhdx)
-library(janitor)
-library(ckanr)
-library(skimr)
-library(sf)
-library(tmap)
-library(leaflet)
-library(readxl)
-library(plotly)
 library(DT)
+library(plotly)
+library(readxl)
 
 cadre_harmonise_caf_ipc <- read_excel("cadre_harmonise_caf_ipc.xlsx")
 cadre_harmonise_caf_ipcnov2020 <- cadre_harmonise_caf_ipc %>% filter(exercise_year == 2020 & exercise_label == "Sep-Dec") %>% mutate_at(vars(population:phase35), replace_na, 0) 
 
-
+#make tables
 #by country
 cadre_harmonise_caf_ipcnov2020country <- cadre_harmonise_caf_ipcnov2020 %>% group_by(Country = adm0_name, chtype) %>% summarise(population = sum(population), phase1 = sum(phase1), phase2 = sum(phase2), phase3 =sum(phase3), phase4 = sum(phase4), phase5 = sum(phase5), phase35 = sum(phase35)) %>% mutate_if(is.numeric, funs(. / 1000000)) %>% mutate_if(is.numeric, round, 2)
 #total
 cadre_harmonise_caf_ipcnov2020total <- cadre_harmonise_caf_ipcnov2020 %>% group_by(chtype) %>% 
   summarise(population = sum(population), phase1 = sum(phase1), phase2 = sum(phase2), phase3 = sum(phase3), phase4 = sum(phase4), phase5 = sum(phase5), phase35 = sum(phase35)) %>% mutate(Country = "Total") %>% mutate_if(is.numeric, funs(. / 1000000)) %>% mutate_if(is.numeric, round, 1)
-
+#put country and total together
 cadre_harmonise_caf_ipcnov2020all <- bind_rows(cadre_harmonise_caf_ipcnov2020country, cadre_harmonise_caf_ipcnov2020total)
-  
+#seperate current from projected
 cadre_harmonise_caf_ipcnov2020current <- cadre_harmonise_caf_ipcnov2020all %>% filter(chtype == "current") %>% select(-chtype)
 cadre_harmonise_caf_ipcnov2020projected <- cadre_harmonise_caf_ipcnov2020all %>% filter(chtype == "projected") %>% select(-chtype)
+
+#make graphs 
+CH_colors = c("phase1" = "#c6ffc7", "phase2" = "#ffe718", "phase3" = "#e88400", "phase4" = "#e02d00", "phase5" = "#5e0803") 
+#long
+cadre_harmonise_caf_ipcnov2020countrylong <- cadre_harmonise_caf_ipcnov2020country %>% select(-population, -phase35) %>% pivot_longer(cols = phase1:phase5, names_to = "phase", "value")
+cadre_harmonise_caf_ipcnov2020currentgraph <- cadre_harmonise_caf_ipcnov2020countrylong %>% filter(chtype == "current") %>% ggplot(aes(x = Country, y = value, fill = phase)) +geom_bar(stat = "identity") +theme_minimal() +theme(axis.text.x = element_text(angle = 90)) +scale_fill_manual(values=CH_colors) +xlab("") +ylab("") +
+      theme(
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank()
+      )
+cadre_harmonise_caf_ipcnov2020projectedgraph <- cadre_harmonise_caf_ipcnov2020countrylong %>% filter(chtype == "projected") %>% ggplot(aes(x = Country, y = value, fill = phase)) +geom_bar(stat = "identity") +theme_minimal() +theme(axis.text.x = element_text(angle = 90)) +scale_fill_manual(values=CH_colors) +xlab("") +ylab("")+
+      theme(
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank()
+      )
+
+
 ```
 
 
 Row
 -------------------------------------
 
+### Population Estimates (in millions) by Phase: November 2020 Exercise Current (September - December 2020)  
+
+```{r}
+ggplotly(cadre_harmonise_caf_ipcnov2020currentgraph)
+```  
   
-### Population Estimates *(in millions) by Phase: November 2020 Exercise Current (September - December 2020)
-    
+### Population Estimates (in millions) by Phase: November 2020 Exercise Projected (June - August 2021)
+
 ```{r}
 datatable(cadre_harmonise_caf_ipcnov2020current,  extensions = 'Buttons', options = list(pageLength = 18, dom = "Bft",
     buttons = c('copy', 'csv', 'excel'))) %>%
@@ -58,6 +73,12 @@ datatable(cadre_harmonise_caf_ipcnov2020current,  extensions = 'Buttons', option
 
 Row
 -------------------------------------   
+
+### Population Estimates (in millions) by Phase: November 2020 Exercise Current (September - December 2020)  
+
+```{r}
+ggplotly(cadre_harmonise_caf_ipcnov2020projectedgraph)
+``` 
 
 
 ### Population Estimates (in millions) by Phase: November 2020 Exercise Projected (June - August 2021)
