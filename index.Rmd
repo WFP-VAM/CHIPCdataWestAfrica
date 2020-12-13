@@ -37,13 +37,12 @@ cadre_harmonise_caf_ipcnov2020currentgraph <- cadre_harmonise_caf_ipcnov2020coun
       theme(
         panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank()
-      )
+      ) 
 cadre_harmonise_caf_ipcnov2020projectedgraph <- cadre_harmonise_caf_ipcnov2020countrylong %>% filter(chtype == "projected") %>% ggplot(aes(x = Country, y = value, fill = phase)) +geom_bar(stat = "identity") +theme_minimal() +theme(axis.text.x = element_text(angle = 90)) +scale_fill_manual(values=CH_colors) +xlab("") +ylab("")+
       theme(
         panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank()
-      )
-
+      ) 
 
 ```
 
@@ -57,6 +56,9 @@ Row
 ggplotly(cadre_harmonise_caf_ipcnov2020currentgraph)
 ```  
   
+> Hover cursor over graph for more information; Select phases in legend to filter
+
+
 ### Population Estimates (in millions) by Phase: November 2020 Exercise Projected (June - August 2021)
 
 ```{r}
@@ -71,6 +73,7 @@ datatable(cadre_harmonise_caf_ipcnov2020current,  extensions = 'Buttons', option
 ```
 
 
+
 Row
 -------------------------------------   
 
@@ -80,6 +83,7 @@ Row
 ggplotly(cadre_harmonise_caf_ipcnov2020projectedgraph)
 ``` 
 
+> Hover cursor over graph for more information; Select phases in legend to filter
 
 ### Population Estimates (in millions) by Phase: November 2020 Exercise Projected (June - August 2021)
     
