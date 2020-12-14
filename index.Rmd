@@ -1,8 +1,7 @@
 ---
 title: "Cadre Harmonisé (CH) & Integrated Phase Classification (IPC) Estimations for West & Central Africa : November 2020 Exercise"
 output: 
-  flexdashboard::flex_dashboard:
-  orientation: row
+  flexdashboard::flex_dashboard
   
 ---
 
@@ -13,6 +12,8 @@ library(tidyverse)
 library(DT)
 library(plotly)
 library(readxl)
+library(leaflet)
+library(sf)
 
 cadre_harmonise_caf_ipc <- read_excel("cadre_harmonise_caf_ipc.xlsx")
 cadre_harmonise_caf_ipcnov2020 <- cadre_harmonise_caf_ipc %>% filter(exercise_year == 2020 & exercise_label == "Sep-Dec") %>% mutate_at(vars(population:phase35), replace_na, 0) 
@@ -44,10 +45,86 @@ cadre_harmonise_caf_ipcnov2020projectedgraph <- cadre_harmonise_caf_ipcnov2020co
         panel.grid.minor.x = element_blank()
       ) 
 
+#add CH shapefile
+CH <- read_sf("C:\\Users\\william.olander\\Dropbox\\CHdata\\data\\geo\\Shapefiles Nov 2020\\wca_CHIPC_clean_nov2020.gpkg")
+
+#reassign
+pal <-  colorFactor(palette = c("#c6ffc7", "#ffe718", "#e88400","#e02d00","#E1E1E1"), 
+              levels = c("1", "2", "3", "4","Not Analyzed"))
+
+CHmapleaflet_current <- CH %>% leaflet() %>% addProviderTiles(providers$CartoDB.Positron) %>% addPolygons(weight = 0.5, fillOpacity = 0.5,
+                                                       color = ~pal(currentnov2020_phase_class),
+                                                       popup = paste("Country:", CH$adm0_name, "<br>",
+                                                                    "Admin1:", CH$adm1_name, "<br>",
+                                                                    "Admin2:", CH$adm2_name, "<br>",
+                                                                    "Phase:", CH$currentnov2020_phase_class, "<br>",
+                                                                    "Total Population:", CH$currentnov2020_population, "<br>",
+                                                                    "Phase 1 Population:", CH$currentnov2020_phase1, "<br>",
+                                                                    "Phase 2 Population:", CH$currentnov2020_phase2, "<br>",
+                                                                    "Phase 3 Population:", CH$currentnov2020_phase3, "<br>",
+                                                                    "Phase 4 Population:", CH$currentnov2020_phase4, "<br>",
+                                                                    "Phase 5 Population:", CH$currentnov2020_phase5, "<br>",
+                                                                    "Phase 3-5 Population:", CH$currentnov2020_phase35, "<br>"),
+                                                       highlight = highlightOptions(weight = 3, color = "black", bringToFront = T)) %>% 
+                                                       addLegend("bottomleft", pal = pal, values = ~currentnov2020_phase_class,
+            title = "Phase",
+            opacity = 4)
+
+
+CHmapleaflet_projected <- CH %>% leaflet() %>% addProviderTiles(providers$CartoDB.Positron) %>% addPolygons(weight = 0.5, fillOpacity = 0.5,
+                                                       color = ~pal(projectednov2020_phase_class),
+                                                       popup = paste("Country:", CH$adm0_name, "<br>",
+                                                                    "Admin1:", CH$adm1_name, "<br>",
+                                                                    "Admin2:", CH$adm2_name, "<br>",
+                                                                    "Phase:", CH$projectednov2020_phase_class, "<br>",
+                                                                    "Total Population:", CH$projectednov2020_population, "<br>",
+                                                                    "Phase 1 Population:", CH$projectednov2020_phase1, "<br>",
+                                                                    "Phase 2 Population:", CH$projectednov2020_phase2, "<br>",
+                                                                    "Phase 3 Population:", CH$projectednov2020_phase3, "<br>",
+                                                                    "Phase 4 Population:", CH$projectednov2020_phase4, "<br>",
+                                                                    "Phase 5 Population:", CH$projectednov2020_phase5, "<br>",
+                                                                    "Phase 3-5 Population:", CH$currentnov2020_phase35, "<br>"),
+                                                       highlight = highlightOptions(weight = 3, color = "black", bringToFront = T)) %>% 
+                                                       addLegend("bottomleft", pal = pal, values = ~projectednov2020_phase_class,
+            title = "Phase",
+            opacity = 4)
+
+
+
+
+
+
 ```
 
+Map of Current & Projected Phases
+=====================================
 
-Row
+Row {data-height=300}
+-------------------------------------
+### Population Estimates (in millions) by Phase: November 2020 Exercise Current (September - December 2020)  
+
+```{r}
+CHmapleaflet_current
+```  
+
+> Click on polygon area for more information
+
+Row {data-height=300}
+-------------------------------------
+
+### Population Estimates (in millions) by Phase: November 2020 Exercise Projected (June - August 2021) 
+
+```{r}
+CHmapleaflet_projected
+```  
+
+> Click on polygon area for more information
+
+
+Population Estimates (table & graph)
+=====================================
+
+Row 
 -------------------------------------
 
 ### Population Estimates (in millions) by Phase: November 2020 Exercise Current (September - December 2020)  
@@ -71,8 +148,9 @@ datatable(cadre_harmonise_caf_ipcnov2020current,  extensions = 'Buttons', option
 
 ```
 
-Row
--------------------------------------   
+Row 
+-------------------------------------
+
 
 ### Population Estimates (in millions) by Phase: November 2020 Exercise Projected (June - August 2021) 
 
