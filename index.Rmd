@@ -2,7 +2,7 @@
 title: "**Cadre Harmonisé (CH) & Integrated Phase Classification (IPC) Estimations for West & Central Africa**"
 output: 
   flexdashboard::flex_dashboard:
-    source_code: "https://github.com/olanderb/CHIPCdataRBD/"
+    source_code: "https://github.com/WFP-VAM/CHIPCdataWestAfrica"
     social: "menu"
   
 ---
@@ -55,8 +55,8 @@ CH_proj <- read_sf("wca_CHIPC_mar2021_projected.gpkg")
 wca_shp0 <- read_sf("wca_shp0all.gpkg")
 
 #reassign
-pal <-  colorFactor(palette = c("#c6ffc7", "#ffe718", "#e88400","#e02d00"), 
-              levels = c("1", "2", "3", "4"))
+pal <-  colorFactor(palette = c("#c6ffc7", "#ffe718", "#e88400","#e02d00","#FFFFFF"), 
+              levels = c("1", "2", "3", "4",NA))
 #final phase
 CHmapleaflet_current <- CH_curr %>% leaflet() %>% addPolygons(weight = 0.25, fillOpacity = 0.75,
                                                        color = ~pal(CH_curr$phase_class),
@@ -102,12 +102,12 @@ CHmapleaflet_projected <- CH_proj %>%  leaflet() %>% addPolygons(weight = 0.25, 
     icon="fa-globe", title="reset to original view",
     onClick=JS("function(btn, map){ map.setView([13, 3], 4);}")))
 #food consumption
-CHmapleaflet_current_FC <- CH_curr %>% filter(admin0Name != "Central African Republic") %>% leaflet() %>% addPolygons(weight = 0.25, fillOpacity = 0.75,
+CHmapleaflet_current_FC <- CH_curr %>% leaflet() %>% addPolygons(weight = 0.25, fillOpacity = 0.75,
                                                        color = ~pal(CH_curr$foodconsumption_phase),
                                                        popup = paste("Country:", CH_curr$adm0_name, "<br>",
                                                                     "Admin1:", CH_curr$adm1_name, "<br>",
                                                                     "Admin2:", CH_curr$adm2_name, "<br>",
-                                                                    "Phase:", CH_curr$currentmar2021_foodconsumption_phase, "<br>"),
+                                                                    "Phase:", CH_curr$foodconsumption_phase, "<br>"),
                                                        highlight = highlightOptions(weight = 3, color = "black", bringToFront = FALSE)) %>% 
                                                        addLegend("bottomleft", pal = pal, values = ~foodconsumption_phase,
             title = "Phase",
@@ -117,7 +117,7 @@ CHmapleaflet_current_FC <- CH_curr %>% filter(admin0Name != "Central African Rep
     icon="fa-globe", title="reset to original view",
     onClick=JS("function(btn, map){ map.setView([13, 3], 4);}")))
 
-CHmapleaflet_projected_FC <- CH_proj %>% filter(admin0Name != "Central African Republic") %>% leaflet() %>% addPolygons(weight = 0.25, fillOpacity = 0.75,
+CHmapleaflet_projected_FC <- CH_proj %>%  leaflet() %>% addPolygons(weight = 0.25, fillOpacity = 0.75,
                                                        color = ~pal(CH_proj$foodconsumption_phase),
                                                        popup = paste("Country:", CH_proj$adm0_name, "<br>",
                                                                     "Admin1:", CH_proj$adm1_name, "<br>",
@@ -132,7 +132,7 @@ CHmapleaflet_projected_FC <- CH_proj %>% filter(admin0Name != "Central African R
     icon="fa-globe", title="reset to original view",
     onClick=JS("function(btn, map){ map.setView([13, 3], 4);}")))
 #livelihoods
-CHmapleaflet_current_LH <- CH_curr %>% filter(admin0Name != "Central African Republic") %>% leaflet() %>% addPolygons(weight = 0.25, fillOpacity = 0.75,
+CHmapleaflet_current_LH <- CH_curr %>% leaflet() %>% addPolygons(weight = 0.25, fillOpacity = 0.75,
                                                        color = ~pal(CH_curr$livelihoods_phase),
                                                        popup = paste("Country:", CH_curr$adm0_name, "<br>",
                                                                     "Admin1:", CH_curr$adm1_name, "<br>",
@@ -147,7 +147,7 @@ CHmapleaflet_current_LH <- CH_curr %>% filter(admin0Name != "Central African Rep
     icon="fa-globe", title="reset to original view",
     onClick=JS("function(btn, map){ map.setView([13, 3], 4);}")))
 
-CHmapleaflet_projected_LH <- CH_proj %>% filter(admin0Name != "Central African Republic") %>% leaflet() %>% addPolygons(weight = 0.25, fillOpacity = 0.75,
+CHmapleaflet_projected_LH <- CH_proj %>% leaflet() %>% addPolygons(weight = 0.25, fillOpacity = 0.75,
                                                        color = ~pal(CH_proj$livelihoods_phase),
                                                        popup = paste("Country:", CH_proj$adm0_name, "<br>",
                                                                     "Admin1:", CH_proj$adm1_name, "<br>",
@@ -163,12 +163,12 @@ CHmapleaflet_projected_LH <- CH_proj %>% filter(admin0Name != "Central African R
     onClick=JS("function(btn, map){ map.setView([13, 3], 4);}")))
 
 #nutrition
-CHmapleaflet_current_Nut <- CH_curr %>% filter(admin0Name != "Central African Republic") %>% leaflet() %>% addPolygons(weight = 0.25, fillOpacity = 0.75,
+CHmapleaflet_current_Nut <- CH_curr %>% leaflet() %>% addPolygons(weight = 0.25, fillOpacity = 0.75,
                                                        color = ~pal(CH_curr$nutrition_phase),
                                                        popup = paste("Country:", CH_curr$adm0_name, "<br>",
                                                                     "Admin1:", CH_curr$adm1_name, "<br>",
                                                                     "Admin2:", CH_curr$adm2_name, "<br>",
-                                                                    "Phase:", CH_curr$currentmar2021_nutrition_phase, "<br>"),
+                                                                    "Phase:", CH_curr$nutrition_phase, "<br>"),
                                                        highlight = highlightOptions(weight = 3, color = "black", bringToFront = FALSE)) %>% 
                                                        addLegend("bottomleft", pal = pal, values = ~nutrition_phase,
             title = "Phase",
@@ -178,12 +178,12 @@ CHmapleaflet_current_Nut <- CH_curr %>% filter(admin0Name != "Central African Re
     icon="fa-globe", title="reset to original view",
     onClick=JS("function(btn, map){ map.setView([13, 3], 4);}")))
 
-CHmapleaflet_projected_Nut <- CH_proj %>% filter(admin0Name != "Central African Republic") %>% leaflet() %>% addPolygons(weight = 0.25, fillOpacity = 0.75,
-                                                       color = ~pal(CH_proj$projectedmar2021_nutrition_phase),
+CHmapleaflet_projected_Nut <- CH_proj  %>% leaflet() %>% addPolygons(weight = 0.25, fillOpacity = 0.75,
+                                                       color = ~pal(CH_proj$nutrition_phase),
                                                        popup = paste("Country:", CH_proj$adm0_name, "<br>",
                                                                     "Admin1:", CH_proj$adm1_name, "<br>",
                                                                     "Admin2:", CH_proj$adm2_name, "<br>",
-                                                                    "Phase:", CH_proj$projectedmar2021_nutrition_phase, "<br>"),
+                                                                    "Phase:", CH_proj$nutrition_phase, "<br>"),
                                                        highlight = highlightOptions(weight = 3, color = "black", bringToFront = FALSE)) %>% 
                                                        addLegend("bottomleft", pal = pal, values = ~nutrition_phase,
             title = "Phase",
@@ -194,7 +194,7 @@ CHmapleaflet_projected_Nut <- CH_proj %>% filter(admin0Name != "Central African 
     onClick=JS("function(btn, map){ map.setView([13, 3], 4);}")))
 
 #mortality
-CHmapleaflet_current_Mort <- CH_curr %>% filter(admin0Name != "Central African Republic") %>% leaflet() %>% addPolygons(weight = 0.25, fillOpacity = 0.75,
+CHmapleaflet_current_Mort <- CH_curr %>% leaflet() %>% addPolygons(weight = 0.25, fillOpacity = 0.75,
                                                        color = ~pal(CH_curr$mortality_phase),
                                                        popup = paste("Country:", CH_curr$adm0_name, "<br>",
                                                                     "Admin1:", CH_curr$adm1_name, "<br>",
@@ -209,12 +209,12 @@ CHmapleaflet_current_Mort <- CH_curr %>% filter(admin0Name != "Central African R
     icon="fa-globe", title="reset to original view",
     onClick=JS("function(btn, map){ map.setView([13, 3], 4);}")))
 
-CHmapleaflet_projected_Mort <- CH_proj %>% filter(admin0Name != "Central African Republic") %>% leaflet() %>% addPolygons(weight = 0.25, fillOpacity = 0.75,
+CHmapleaflet_projected_Mort <- CH_proj %>% leaflet() %>% addPolygons(weight = 0.25, fillOpacity = 0.75,
                                                        color = ~pal(CH_proj$mortality_phase),
                                                        popup = paste("Country:", CH_proj$adm0_name, "<br>",
                                                                     "Admin1:", CH_proj$adm1_name, "<br>",
                                                                     "Admin2:", CH_proj$adm2_name, "<br>",
-                                                                    "Phase:", CH_proj$projectedmar2021_mortality_phase, "<br>"),
+                                                                    "Phase:", CH_proj$mortality_phase, "<br>"),
                                                        highlight = highlightOptions(weight = 3, color = "black", bringToFront = FALSE)) %>% 
                                                        addLegend("bottomleft", pal = pal, values = ~mortality_phase,
             title = "Phase",
@@ -288,6 +288,164 @@ cat("
 CHmapleaflet_projected
 ```  
 
+> Click on polygon area for more information
+
+
+Map of Current & Projected Food Consumption Phases {data-navmenu="Maps"}
+=====================================
+
+Row 
+-------------------------------------
+
+### Food Consumption Outcome Phasing of Areas: Current (January - May 2021)
+
+```{r results="asis"}
+cat("
+<style>
+.leaflet-container {
+    background: #FFF;
+}
+</style>
+")
+CHmapleaflet_current_FC
+```  
+
+> Click on polygon area for more information
+
+Row 
+-------------------------------------
+
+### Food Consumption Outcome Phasing of Areas:  Projected (June - August 2021)
+
+```{r results="asis"}
+cat("
+<style>
+.leaflet-container {
+    background: #FFF;
+}
+</style>
+")
+CHmapleaflet_projected_FC 
+```  
+
+> Click on polygon area for more information
+
+Map of Current & Projected Livelihood Phases {data-navmenu="Maps"}
+=====================================
+
+Row 
+-------------------------------------
+
+### Livelihood Outcome Phasing of Areas: Current (January - May 2021)
+
+```{r results="asis"}
+cat("
+<style>
+.leaflet-container {
+    background: #FFF;
+}
+</style>
+")
+CHmapleaflet_current_LH
+```  
+
+> Click on polygon area for more information
+
+Row 
+-------------------------------------
+
+### Livelihood Outcome Phasing of Areas:  Projected (June - August 2021)
+
+```{r results="asis"}
+cat("
+<style>
+.leaflet-container {
+    background: #FFF;
+}
+</style>
+")
+CHmapleaflet_projected_LH 
+``` 
+
+> Click on polygon area for more information
+
+Map of Current & Projected Nutrition Phases {data-navmenu="Maps"}
+=====================================
+
+Row 
+-------------------------------------
+
+### Nutrition Outcome Phasing of Areas: Current (January - May 2021)
+
+```{r results="asis"}
+cat("
+<style>
+.leaflet-container {
+    background: #FFF;
+}
+</style>
+")
+CHmapleaflet_current_Nut
+```  
+
+> Click on polygon area for more information
+
+Row 
+-------------------------------------
+
+### Nutrition Outcome Phasing of Areas:  Projected (June - August 2021)
+
+```{r results="asis"}
+cat("
+<style>
+.leaflet-container {
+    background: #FFF;
+}
+</style>
+")
+CHmapleaflet_projected_Nut
+``` 
+
+> Click on polygon area for more information
+
+Map of Current & Projected Mortality Phases {data-navmenu="Maps"}
+=====================================
+
+Row 
+-------------------------------------
+
+### Mortality Outcome Phasing of Areas: Current (January - May 2021)
+
+```{r results="asis"}
+cat("
+<style>
+.leaflet-container {
+    background: #FFF;
+}
+</style>
+")
+CHmapleaflet_current_Mort
+```  
+
+> Click on polygon area for more information
+
+Row 
+-------------------------------------
+
+### Mortality Outcome Phasing of Areas:  Projected (June - August 2021)
+
+```{r results="asis"}
+cat("
+<style>
+.leaflet-container {
+    background: #FFF;
+}
+</style>
+")
+CHmapleaflet_projected_Mort 
+``` 
+
+> Click on polygon area for more information
 
 Population Estimates (table & graph) {data-navmenu="Figures"}
 =====================================

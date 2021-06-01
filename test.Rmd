@@ -1,0 +1,63 @@
+---
+title: "test"
+author: "RBD RAM"
+date: "6/1/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(flexdashboard)
+library(tidyverse)
+library(DT)
+library(plotly)
+library(readxl)
+library(leaflet)
+library(sf)
+library(leaflet.extras2)
+
+
+#add CH shapefile
+CH_curr <- read_sf("C:\\RBD_CHIPC_dataprocessing\\data\\geo\\finalized_CHgeofiles\\wca_CHIPC_mar2021_current.gpkg")
+CH_proj <- read_sf("C:\\RBD_CHIPC_dataprocessing\\data\\geo\\finalized_CHgeofiles\\wca_CHIPC_mar2021_projected.gpkg")
+
+#add boundarry of countries
+wca_shp0 <- read_sf("C:\\RBD_CHIPC_dataprocessing\\data\\geo\\finalized_CHgeofiles\\wca_shp0all.gpkg")
+wca_shp0_nocar <- read_sf("C:\\RBD_CHIPC_dataprocessing\\data\\geo\\finalized_CHgeofiles\\wca_shp0all.gpkg") %>% filter(admin0Name != "Central African Republic")
+
+#reassign
+pal_1 <-  colorFactor(palette = c("#c6ffc7", "#ffe718", "#e88400","#e02d00","#FFFFFF"), 
+                    levels = c("1", "2", "3", "4",NA))
+#final phase
+CHmapleaflet_current_fc <- CH_curr %>% leaflet() %>% addPolygons(weight = 0.25, fillOpacity = 0.75,
+                                                              color = ~pal_1(CH_curr$foodconsumption_phase),
+                                                              popup = paste("Country:", CH_curr$adm0_name, "<br>",
+                                                                            "Admin1:", CH_curr$adm1_name, "<br>",
+                                                                            "Admin2:", CH_curr$adm2_name, "<br>",
+                                                                            "Phase:", CH_curr$foodconsumption_phase, "<br>"),
+                                                              highlight = highlightOptions(weight = 3, color = "black", bringToFront = FALSE)) %>% 
+  addLegend("bottomleft", pal = pal_1, values = ~foodconsumption_phase,
+            title = "Phase",
+            opacity = 4) %>% addPolylines(data=wca_shp0_nocar, color="#000000", weight=2.5) %>%
+  addEasyprint() %>% setView(lat= 13, lng=3, zoom=4)  %>%
+  addEasyButton(easyButton(
+    icon="fa-globe", title="reset to original view",
+    onClick=JS("function(btn, map){ map.setView([13, 3], 4);}")))
+
+
+```
+
+## R Markdown
+
+
+```{r results="asis"}
+cat("
+<style>
+.leaflet-container {
+    background: #FFF;
+}
+</style>
+")
+CHmapleaflet_current_fc 
+```  
