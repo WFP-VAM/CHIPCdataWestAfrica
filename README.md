@@ -2,7 +2,7 @@
 data and files for CH &amp; IPC 
 
 webpage:
-https://olanderb.github.io/CHIPCdataRBD/
+https://wfp-vam.github.io/CHIPCdataWestAfrica/
 
 source of data:
 https://data.humdata.org/organization/fsnwg
